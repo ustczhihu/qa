@@ -39,7 +39,7 @@
 ## 安装部署
 
 ```shell
-git clone https://github.com/funtowin/qa.git
+git clone https://github.com/ustczhihu/qa.git
 ```
 
 本项目使用`go module`管理依赖包，运行项目前请先安装依赖
