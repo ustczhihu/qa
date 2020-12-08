@@ -20,6 +20,6 @@ func Init() (err error) {
 		panic("failed to connect database !")
 	}
 
-	DB.SingularTable(true)
+	DB.SingularTable(true)   //以实现结构体名为非复数形式
 	return
 }
