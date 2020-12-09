@@ -11,9 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fe231af3-1986-4b31-93b8-3562339e7486" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.air.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dao/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/dao/db.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/question.go" beforeDir="false" afterPath="$PROJECT_DIR$/model/question.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/router/router.go" beforeDir="false" afterPath="$PROJECT_DIR$/router/router.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,13 +56,14 @@
     <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\项目github\qa" />
+      <recent name="D:\项目github\qa\util" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\项目github\qa" />
       <recent name="D:\项目github\qa\dao" />
       <recent name="D:\项目github\qa\src" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\项目github\qa\util" />
     </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -93,10 +96,10 @@
     <integration-enabled>true</integration-enabled>
   </component>
   <component name="WindowStateProjectService">
-    <state x="425" y="163" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606896635195">
+    <state x="425" y="163" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1607493825391">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state x="425" y="163" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1606896635195" />
+    <state x="425" y="163" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1366.728@0.0.1366.728" timestamp="1607493825391" />
     <state x="463" y="118" key="FileChooserDialogImpl" timestamp="1607266203014">
       <screen x="0" y="0" width="1366" height="728" />
     </state>

@@ -10,6 +10,7 @@
 - [x] 查看问题列表
 - [x] 集成 jwt
 - [x] 集成 snowflake 雪花算法
+- [x] 集成 air 热加载
 - [ ] 用户修改 profile
 - [ ] 用户修改删除问题
 
@@ -24,16 +25,16 @@
 
 ```
 -qa
-    |-config     项目配置
-    |-controller 控制器
-    |-dao        数据库连接
-    |-middleware 中间件
-    |-model      模型
-    |-router     路由
-    |-util       公用工具
-    |-go.mod     项目依赖
-    |-initDB.go  数据库初始化文件
-    |-main.go    程序执行入口
+ |-config     项目配置
+ |-controller 控制器
+ |-dao        数据库连接
+ |-middleware 中间件
+ |-model      模型
+ |-router     路由
+ |-util       公用工具
+ |-go.mod     项目依赖
+ |-initDB.go  数据库初始化文件
+ |-main.go    程序执行入口
 ```
 
 ## 安装部署
@@ -83,6 +84,12 @@ go run ./ -initDB
 
 ```shell
 go run ./
+```
+
+增加 air 热加载功能，运行程序可使用
+
+```shell
+air
 ```
 
 ## 效果图

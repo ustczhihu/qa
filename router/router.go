@@ -7,7 +7,7 @@ import (
 )
 
 func Init() (r *gin.Engine) {
-	gin.DisableConsoleColor()   //禁用控制台颜色
+	//gin.DisableConsoleColor()   //禁用控制台颜色
 	r = gin.Default()
 
 	user := r.Group("/user")
