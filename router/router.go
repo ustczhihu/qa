@@ -2,12 +2,14 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
+	"qa/config"
 	"qa/controller"
 	"qa/middleware"
 )
 
 func Init() (r *gin.Engine) {
-	//gin.DisableConsoleColor()   //禁用控制台颜色
+
+	gin.SetMode(config.Conf.Mode)
 	r = gin.Default()
 
 	user := r.Group("/user")

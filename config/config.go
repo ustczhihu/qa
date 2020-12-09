@@ -12,6 +12,7 @@ type Configuration struct {
 	} `json:"db"`
 	Address string `json:"address"`
 	JwtKey  string `json:"jwtKey"`
+	Mode    string `json:"mode"`
 }
 
 var Conf = new(Configuration)
