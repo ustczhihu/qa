@@ -10,7 +10,10 @@ import (
 func Init() (r *gin.Engine) {
 
 	gin.SetMode(config.Conf.Mode)
-	r = gin.Default()
+	r = gin.New()
+	r.Use(middleware.Log())
+	r.Use(gin.Recovery())
+	r.Use(middleware.Cors())
 
 	user := r.Group("/user")
 	{

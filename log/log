@@ -1,0 +1,3 @@
+time="2020-12-12T17:28:42+08:00" level=info Agent=PostmanRuntime/7.26.8 DataSize=44 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="20 ms" status=200
+time="2020-12-12T17:28:54+08:00" level=info Agent=PostmanRuntime/7.26.8 DataSize=27 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="24 ms" status=200
+=200

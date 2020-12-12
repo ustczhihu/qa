@@ -8,9 +8,9 @@ import (
 // Question 问题
 type Question struct {
 	GORMBase
-	Title          string  `json:"title" gorm:"type:varchar(500)" validate:"required,min=6,max=30,endswith=?" label:"问题题目"`
+	Title          string  `json:"title" gorm:"type:varchar(500);not null" validate:"required,min=6,max=30,endswith=?" label:"问题题目"`
 	Content        string  `json:"content" gorm:"type:longtext" validate:"max=200" label:"问题描述"`
-	UserID         uint64  `json:"userId,string" validate:"required" label:"提问者ID"`
+	UserID         uint64  `json:"userId,string" gorm:"not null" validate:"required" label:"提问者ID"`
 	CreatorProfile Profile `json:"creator" gorm:"foreignKey:UserID;associationForeignKey:UserID"`
 }
 
