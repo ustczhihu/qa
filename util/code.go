@@ -19,7 +19,10 @@ const (
 
 	// code= 2000... 问题模块的错误
 	QuestionInvalidParams  MyCode = 2001
-	QuestionDataBaseError MyCode = 2002
+	QuestionDataBaseError  MyCode = 2002
+	QuestionExist          MyCode = 2003
+	QuestionNotExist       MyCode = 2004
+	QuestionUserIdNotMatch MyCode = 2005
 )
 
 var msgFlags = map[MyCode]string{
@@ -29,7 +32,7 @@ var msgFlags = map[MyCode]string{
 	UserInvalidParams:   "用户请求参数错误",
 	UserExist:           "用户名重复",
 	UserNotExist:        "用户不存在",
-	UserInvalidPassword: "用户名或密码错误",
+	UserInvalidPassword: "密码错误",
 	UserDataBaseError:   "用户数据库错误",
 	UserNotLogin:        "用户未登录",
 	UserTokenNotExist:   "TOKEN不存在",
@@ -37,7 +40,10 @@ var msgFlags = map[MyCode]string{
 	UserTokenWrong:      "TOKEN格式错误",
 
 	QuestionInvalidParams:  "问题请求参数错误",
-	QuestionDataBaseError: "问题数据库错误",
+	QuestionDataBaseError:  "问题数据库错误",
+	QuestionExist:          "问题题目重复",
+	QuestionNotExist:       "问题题目不存在",
+	QuestionUserIdNotMatch: "提问者ID和当前用户ID不匹配",
 }
 
 func (c MyCode) Msg() string {

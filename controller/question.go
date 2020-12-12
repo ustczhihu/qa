@@ -1,28 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"qa/model"
 	util "qa/util"
 	"strconv"
 )
-
-type Creator struct {
-	ID        uint64 `json:"userId"`
-	Nickname  string `json:"nickname"`
-	AvatarUrl string `json:"avatarUrl"`
-}
-
-type QuestionVo struct {
-	ID        uint64  `json:"id"`
-	CreatedAt string  `json:"createAt"`
-	UpdatedAt string  `json:"updateAt"`
-	Title     string  `json:"title"`
-	Content   string  `json:"content"`
-	Creator   Creator `json:"creator"`
-}
 
 // 创建问题
 func AddQuestion(c *gin.Context) {
@@ -36,7 +20,41 @@ func AddQuestion(c *gin.Context) {
 		return
 	}
 
-	code := q.Create()
+	msg, code := util.Validate(&q)
+	if code != util.CodeSuccess {
+		c.JSON(
+			http.StatusOK, gin.H{
+				"code":    code,
+				"message": msg,
+			},
+		)
+		return
+	}
+
+	//验证token中的userid和传过来的userid是否一致
+	userID := c.MustGet("userID").(uint64)
+
+	if userID != q.UserID {
+		code = util.QuestionUserIdNotMatch
+		c.JSON(
+			http.StatusOK, gin.H{
+				"code":    code,
+				"message": code.Msg(),
+			},
+		)
+		return
+	}
+
+	code = model.CheckQuestion(q.Title)
+	if code != util.QuestionNotExist {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    code,
+			"message": code.Msg(),
+		})
+		return
+	}
+
+	code = q.Create()
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
@@ -63,31 +81,11 @@ func GetAllQuestion(c *gin.Context) {
 	var code util.MyCode
 	var total int64
 	qlist, total, code = model.GetAllQuestion(pageSize, pageNum)
-
-	var qvolist []QuestionVo
-	var p model.Profile
-	for _, v := range qlist {
-		var qvo QuestionVo
-		qvo.ID=v.ID
-		qvo.Title=v.Title
-		qvo.Content=v.Content
-		qvo.CreatedAt=v.CreatedAt
-		qvo.UpdatedAt=v.UpdatedAt
-
-		p, _ = model.GetByUserID(v.UserID)
-
-		fmt.Printf("%#v",p)
-		qvo.Creator.ID=v.UserID
-		qvo.Creator.Nickname=p.Nickname
-		qvo.Creator.AvatarUrl=p.AvatarUrl
-		qvolist=append(qvolist, qvo)
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
 		"data": gin.H{
-			"questionList": qvolist,
+			"questionList": qlist,
 			"total":        total,
 		},
 	})

@@ -10,34 +10,18 @@ import (
 
 //用户注册检验
 func RegisterValidate(c *gin.Context) {
-	var u model.User
+	username := c.Query("username")
 
-	if err := c.ShouldBind(&u); err != nil {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    util.UserInvalidParams,
-			"message": util.UserInvalidParams.Msg(),
-		})
-		return
-	}
-
-	_, code := u.Get()
-	if code == util.UserNotExist {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    util.CodeSuccess,
-			"message": util.CodeSuccess.Msg(),
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code":    util.UserExist,
-			"message": util.UserExist.Msg(),
-		})
-	}
+	code := model.CheckUser(username)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    code,
+		"message": code.Msg(),
+	})
 }
 
 //用户注册
 func Register(c *gin.Context) {
 	var u model.User
-	var p model.Profile
 
 	if err := c.ShouldBind(&u); err != nil {
 		c.JSON(http.StatusOK, gin.H{
@@ -47,8 +31,19 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	code := u.Create()
-	if code != util.CodeSuccess{
+	msg, code := util.Validate(&u)
+	if code != util.CodeSuccess {
+		c.JSON(
+			http.StatusOK, gin.H{
+				"code":    code,
+				"message": msg,
+			},
+		)
+		return
+	}
+
+	code = model.CheckUser(u.Username)
+	if code != util.UserNotExist {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    code,
 			"message": code.Msg(),
@@ -56,13 +51,22 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	p.UserID=u.ID
+	code = u.Create()
+	if code != util.CodeSuccess {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    code,
+			"message": code.Msg(),
+		})
+		return
+	}
+
+	var p model.Profile
+	p.UserID = u.ID
 	code = p.Create()
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
 	})
-
 }
 
 //用户登录
@@ -83,8 +87,8 @@ func Login(c *gin.Context) {
 	user, code = u.CheckLogin()
 
 	if code == util.CodeSuccess {
-		token, code = middleware.SetToken(u.Username)
-	}else{
+		token, code = middleware.SetToken(user.Username,user.ID)
+	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    code,
 			"message": code.Msg(),
@@ -92,13 +96,10 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	var p model.Profile
-	p,code=model.GetByUserID(user.ID)
-
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
 		"token":   token,
-		"data": p,
+		"data":    user.Profile,
 	})
 }

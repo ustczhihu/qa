@@ -8,14 +8,42 @@ import (
 // Question 问题
 type Question struct {
 	GORMBase
-	Title   string `json:"title" gorm:"type:varchar(500)"`
-	Content string `json:"content" gorm:"type:varchar(2000)"`
-	UserID  uint64 `json:"userId,string"`
+	Title          string  `json:"title" gorm:"type:varchar(500)" validate:"required,min=6,max=30,endswith=?" label:"问题题目"`
+	Content        string  `json:"content" gorm:"type:longtext" validate:"max=200" label:"问题描述"`
+	UserID         uint64  `json:"userId,string" validate:"required" label:"提问者ID"`
+	CreatorProfile Profile `json:"creator" gorm:"foreignKey:UserID;associationForeignKey:UserID"`
 }
 
-// 创建问题
+//查询问题是否存在
+func CheckQuestion(title string) util.MyCode {
+	var question Question
+	dao.DB.Select("id").Where("title=?", title).First(&question)
+	if question.ID > 0 {
+		return util.QuestionExist
+	} else {
+		return util.QuestionNotExist
+	}
+}
+
+//创建问题
 func (q *Question) Create() util.MyCode {
 	if err := dao.DB.Create(&q).Error; err != nil {
+		return util.QuestionDataBaseError
+	}
+	return util.CodeSuccess
+}
+
+//删除问题
+func (q *Question) Delete() util.MyCode {
+	if err := dao.DB.Delete(&q).Error; err != nil {
+		return util.QuestionDataBaseError
+	}
+	return util.CodeSuccess
+}
+
+//更新问题
+func (q *Question) Update() util.MyCode {
+	if err := dao.DB.Update(&q).Error; err != nil {
 		return util.QuestionDataBaseError
 	}
 	return util.CodeSuccess
@@ -24,7 +52,7 @@ func (q *Question) Create() util.MyCode {
 // 查询所有问题
 func GetAllQuestion(pageSize int, pageNum int) (questionList []Question, total int64, code util.MyCode) {
 
-	err := dao.DB.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&questionList).Count(&total).Error
+	err := dao.DB.Preload("CreatorProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&questionList).Count(&total).Error
 	if err != nil {
 		code = util.QuestionDataBaseError
 		return
