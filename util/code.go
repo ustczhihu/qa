@@ -16,10 +16,14 @@ const (
 	UserTokenNotExist   MyCode = 1007
 	UserTokenExpired    MyCode = 1008
 	UserTokenWrong      MyCode = 1009
+	ProfileSaveFail     MyCode = 1010
 
 	// code= 2000... 问题模块的错误
 	QuestionInvalidParams  MyCode = 2001
 	QuestionDataBaseError MyCode = 2002
+
+	// code= 3000... 上传文件模块的错误
+	UploadFail MyCode = 3001
 )
 
 var msgFlags = map[MyCode]string{
@@ -35,9 +39,12 @@ var msgFlags = map[MyCode]string{
 	UserTokenNotExist:   "TOKEN不存在",
 	UserTokenExpired:    "TOKEN已过期",
 	UserTokenWrong:      "TOKEN格式错误",
+	ProfileSaveFail:     "个人简介保存失败",
 
 	QuestionInvalidParams:  "问题请求参数错误",
 	QuestionDataBaseError: "问题数据库错误",
+
+	UploadFail: "上传失败",
 }
 
 func (c MyCode) Msg() string {

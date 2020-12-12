@@ -12,3 +12,9 @@ jwtKey: salt20201206
 
 # 端口
 address: :9090
+#
+## 七牛云存储
+#AccessKey : XdET1lY5VuL2VJYLrhOFhgkuEMnub8TWeNLMc5Oy
+#SecretKey : prliESBDhNdu2TBP0rDldLBlPBgOmW91reJ9ISC3
+#Bucket : ustcqa
+#QiniuServer : http://ql7gtjj87.hd-bkt.clouddn.com/

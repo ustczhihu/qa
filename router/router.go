@@ -24,5 +24,13 @@ func Init() (r *gin.Engine) {
 		question.POST("/add", middleware.JwtToken(), controller.AddQuestion)
 		question.GET("/queryAll", controller.GetAllQuestion)
 	}
+
+	profile := r.Group("/profile")
+	profile.Use(middleware.JwtToken())
+	{
+		profile.GET("/getByUserID/:id", controller.GetProfile)
+		profile.POST("/updateProfile", controller.UpdateProfile)
+		profile.POST("/uploadAvatarUrl", controller.UpLoad)
+	}
 	return
 }

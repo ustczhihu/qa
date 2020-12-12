@@ -63,6 +63,10 @@ func Register(c *gin.Context) {
 		"message": code.Msg(),
 	})
 
+	err := p.BeforeSave()    //注册成功前将profile信息设置为默认值
+	if err != nil{
+		return
+	}
 }
 
 //用户登录
