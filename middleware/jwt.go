@@ -14,14 +14,16 @@ var JwtKey = []byte(config.Conf.JwtKey)
 
 type MyClaims struct {
 	Username string `json:"username"`
+	UserID uint64 `json:"userId,string"`
 	jwt.StandardClaims
 }
 
 // 生成token
-func SetToken(username string) (string, util.MyCode) {
+func SetToken(username string,userID uint64) (string, util.MyCode) {
 	expireTime := time.Now().Add(10 * time.Hour)
 	SetClaims := MyClaims{
 		username,
+		userID,
 		jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			Issuer:    "qa",
@@ -36,7 +38,7 @@ func SetToken(username string) (string, util.MyCode) {
 	return token, util.CodeSuccess
 
 }
-
+ 
 // 验证token
 func CheckToken(token string) (*MyClaims, util.MyCode) {
 	var claims MyClaims
@@ -100,6 +102,7 @@ func JwtToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
 		key, tCode := CheckToken(checkToken[1])
 		if tCode != util.CodeSuccess {
 			code = tCode
@@ -110,7 +113,7 @@ func JwtToken() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-		c.Set("username", key)
+		c.Set("userID", key.UserID)
 		c.Next()
 	}
 }

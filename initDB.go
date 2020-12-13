@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"qa/dao"
 	"qa/model"
+	"qa/util"
 )
 
 func Init() (err error) {
@@ -39,7 +40,16 @@ func Init() (err error) {
 	}
 
 	u0 := model.User{Username: "lily", Password: "123456"}
-	u0.Create()
+	code := u0.Create()
+	if code != util.CodeSuccess {
+		fmt.Println("user create error!!!")
+	}
+	var p0 model.Profile
+	p0.UserID = u0.ID
+	code = p0.Create()
+	if code != util.CodeSuccess {
+		fmt.Println("profile create error!!!")
+	}
 
 	fmt.Println("restarted success !")
 	return

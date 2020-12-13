@@ -1,22 +1,32 @@
 package model
 
 import (
-	"encoding/base64"
-	"golang.org/x/crypto/scrypt"
-	"log"
+	"golang.org/x/crypto/bcrypt"
 	"qa/dao"
 	"qa/util"
 )
 
 type User struct {
 	GORMBase
-	Username string `form:"username" json:"username" gorm:"type:varchar(500)"`
-	Password string `form:"password" json:"password" gorm:"type:varchar(500)"`
+	Username string `json:"username" gorm:"type:varchar(500);not null" validate:"required,min=3,max=12" label:"用户名"`
+	Password string `json:"password" gorm:"type:varchar(500);not null" validate:"required,min=6,max=20" label:"密码"`
+	Profile Profile `json:"profile" gorm:"foreignKey:ID;associationForeignKey:UserID"`
 }
 
-// 查询用户
+//查询用户是否存在
+func CheckUser(name string) util.MyCode{
+	var user User
+	dao.DB.Select("id").Where("username=?", name).First(&user)
+	if user.ID > 0 {
+		return util.UserExist
+	} else {
+		return util.UserNotExist
+	}
+}
+
+//查询用户
 func (u *User) Get() (user User, code util.MyCode) {
-	if err := dao.DB.Where(&u).First(&user).Error; err != nil {
+	if err := dao.DB.Preload("Profile").Where(&u).First(&user).Error; err != nil {
 		code = util.UserNotExist
 	} else {
 		code = util.CodeSuccess
@@ -24,7 +34,7 @@ func (u *User) Get() (user User, code util.MyCode) {
 	return
 }
 
-// 创建用户
+//创建用户
 func (u *User) Create() util.MyCode {
 	if err := dao.DB.Create(&u).Error; err != nil {
 		return util.UserDataBaseError
@@ -32,34 +42,39 @@ func (u *User) Create() util.MyCode {
 	return util.CodeSuccess
 }
 
-// 密码加密
-func (u *User) BeforeSave() (err error) {
-	u.Password = ScryptPw(u.Password)
-	return nil
+//删除用户
+func (u *User) Delete() util.MyCode {
+	if err := dao.DB.Delete(&u).Error; err != nil {
+		return util.UserDataBaseError
+	}
+	return util.CodeSuccess
 }
 
-func ScryptPw(password string) string {
-	const KeyLen = 10
-	salt := make([]byte, 8)
-	salt = []byte{12, 32, 4, 6, 66, 22, 222, 11}
-
-	HashPw, err := scrypt.Key([]byte(password), salt, 16384, 8, 1, KeyLen)
-	if err != nil {
-		log.Fatal(err)
+//更新用户
+func (u *User) Update() util.MyCode {
+	if err := dao.DB.Update(&u).Error; err != nil {
+		return util.UserDataBaseError
 	}
-	fpw := base64.StdEncoding.EncodeToString(HashPw)
-	return fpw
+	return util.CodeSuccess
+}
+
+//密码加密
+func (u *User) BeforeSave() (err error) {
+	var hash []byte
+	hash, err = bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	u.Password = string(hash)
+	return
 }
 
 // 登录验证
 func (u *User) CheckLogin() (user User, code util.MyCode) {
-	err := dao.DB.Where("username = ?", u.Username).First(&user).Error
+	err := dao.DB.Preload("Profile").Where("username = ?", u.Username).First(&user).Error
 
 	if err != nil {
 		code = util.UserNotExist
 		return
 	}
-	if ScryptPw(u.Password) != user.Password {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(u.Password)); err != nil {
 		code = util.UserInvalidPassword
 		return
 	}
