@@ -1,9 +1,0 @@
-time="2020-12-12 17:12:56" level=info Agent=PostmanRuntime/7.26.8 DataSize=44 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="36 ms" status=200
-time="2020-12-12 17:17:34" level=info Agent=PostmanRuntime/7.26.8 DataSize=395 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/user/login SpendTime="118 ms" status=200
-time="2020-12-12 17:17:58" level=info Agent=PostmanRuntime/7.26.8 DataSize=322 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=GET Path=/question/queryAll SpendTime="17 ms" status=200
-time="2020-12-12 17:26:36" level=info Agent=PostmanRuntime/7.26.8 DataSize=124 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="3 ms" status=200
-time="2020-12-12 17:26:50" level=info Agent=PostmanRuntime/7.26.8 DataSize=124 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="0 ms" status=200
-time="2020-12-12 17:27:16" level=error Agent=PostmanRuntime/7.26.8 DataSize=0 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="23 ms" status=500
-time="2020-12-12 17:27:52" level=error Agent=PostmanRuntime/7.26.8 DataSize=0 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="32 ms" status=500
-time="2020-12-12 17:28:42" level=info Agent=PostmanRuntime/7.26.8 DataSize=44 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="20 ms" status=200
-time="2020-12-12 17:28:54" level=info Agent=PostmanRuntime/7.26.8 DataSize=27 HostName=ThinkPad-X230 Ip=127.0.0.1 Method=POST Path=/question/add SpendTime="24 ms" status=200
