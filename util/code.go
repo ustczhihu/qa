@@ -23,6 +23,12 @@ const (
 	QuestionExist          MyCode = 2003
 	QuestionNotExist       MyCode = 2004
 	QuestionUserIdNotMatch MyCode = 2005
+
+	// code= 3000... 个人简介模块的错误
+	ProfileSaveFail       MyCode = 3001
+
+	// code= 4000... 上传文件模块的错误
+	UploadFail            MyCode = 4001
 )
 
 var msgFlags = map[MyCode]string{
@@ -44,6 +50,10 @@ var msgFlags = map[MyCode]string{
 	QuestionExist:          "问题题目重复",
 	QuestionNotExist:       "问题题目不存在",
 	QuestionUserIdNotMatch: "提问者ID和当前用户ID不匹配",
+
+	ProfileSaveFail:         "个人简介保存失败",
+
+	UploadFail:              "上传失败",
 }
 
 func (c MyCode) Msg() string {
