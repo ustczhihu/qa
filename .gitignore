@@ -15,5 +15,5 @@
 # vendor/
 
 .idea/
-.log/
-.tmp/
+log/
+tmp/
