@@ -22,15 +22,18 @@ User Story 2
 
 ## 技术选型
 
-| 名称      | 地址                                   | 作用            |
-| --------- | -------------------------------------- | --------------- |
-| gin       | https://github.com/gin-gonic/gin       | web 框架        |
-| gorm      | https://github.com/jinzhu/gorm         | orm 映射框架    |
-| mysql     | https://github.com/go-sql-driver/mysql | 数据库          |
-| viper     | https://github.com/spf13/viper         | 配置管理        |
-| jwt-go    | https://github.com/dgrijalva/jwt-go    | jwt 认证        |
-| snoyflake | https://github.com/sony/sonyflake      | 雪花算法唯一 ID |
-| air       | https://github.com/cosmtrek/air        | 开发热加载      |
+| 名称      | 地址                                           | 作用            |
+| --------- | ---------------------------------------------- | --------------- |
+| gin       | https://github.com/gin-gonic/gin               | web 框架        |
+| gorm      | https://github.com/jinzhu/gorm                 | orm 映射框架    |
+| mysql     | https://github.com/go-sql-driver/mysql         | 数据库          |
+| viper     | https://github.com/spf13/viper                 | 配置管理        |
+| jwt-go    | https://github.com/dgrijalva/jwt-go            | jwt 认证        |
+| snoyflake | https://github.com/sony/sonyflake              | 雪花算法唯一 ID |
+| air       | https://github.com/cosmtrek/air                | 开发热加载      |
+| logrus    | https://github.com/sirupsen/logrus             | 日志处理        |
+| bcrypt    | https://golang.org/x/crypto/bcrypt             | 密码处理        |
+| validator | https://github.com/go-playground/validator/v10 | 数据校验        |
 
 ## 项目结构
 
