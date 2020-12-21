@@ -4,22 +4,33 @@
 
 设计并实现一个类似知乎的问答系统，项目施工中...
 
+User Stroy 1
+
 - [x] 用户注册
 - [x] 用户登录
 - [x] 发布问题
 - [x] 查看问题列表
-- [x] 集成 jwt
-- [x] 集成 snowflake 雪花算法
-- [x] 集成 air 热加载
-- [ ] 用户修改 profile
-- [ ] 用户修改删除问题
+- [x] 修改问题
+- [x] 删除问题
+
+User Story 2
+
+- [x] 修改 profile
+- [] 回答问题
+- [] 修改回答
+- [] 删除回答
 
 ## 技术选型
 
-1. web:[gin](https://github.com/gin-gonic/gin)
-2. orm:[gorm](https://github.com/jinzhu/gorm)
-3. database:[mysql](https://github.com/go-sql-driver/mysql)
-4. config manager:[viper](https://github.com/spf13/viper)
+| 名称      | 地址                                   | 作用            |
+| --------- | -------------------------------------- | --------------- |
+| gin       | https://github.com/gin-gonic/gin       | web 框架        |
+| gorm      | https://github.com/jinzhu/gorm         | orm 映射框架    |
+| mysql     | https://github.com/go-sql-driver/mysql | 数据库          |
+| viper     | https://github.com/spf13/viper         | 配置管理        |
+| jwt-go    | https://github.com/dgrijalva/jwt-go    | jwt 认证        |
+| snoyflake | https://github.com/sony/sonyflake      | 雪花算法唯一 ID |
+| air       | https://github.com/cosmtrek/air        | 开发热加载      |
 
 ## 项目结构
 
@@ -65,10 +76,10 @@ go env -w GOPROXY=https://goproxy.cn,direct
 # 数据库
 db:
   driver: mysql
-  addr: root:root@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
+  addr: yourusername:yourpassword@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
 
 # jwt认证密钥
-jwtKey: salt20201206
+jwtKey: yourjwtkey
 
 # 端口
 address: :9090
