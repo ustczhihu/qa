@@ -13,6 +13,11 @@ func RegisterValidate(c *gin.Context) {
 	username := c.Query("username")
 
 	code := model.CheckUser(username)
+
+	if code == util.UserNotExist {
+		code = util.CodeSuccess
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
@@ -87,7 +92,7 @@ func Login(c *gin.Context) {
 	user, code = u.CheckLogin()
 
 	if code == util.CodeSuccess {
-		token, code = middleware.SetToken(user.Username,user.ID)
+		token, code = middleware.SetToken(user.Username, user.ID)
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    code,

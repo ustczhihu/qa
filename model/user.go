@@ -20,7 +20,7 @@ func CheckUser(name string) util.MyCode{
 	if user.ID > 0 {
 		return util.UserExist
 	} else {
-		return util.CodeSuccess
+		return util.UserNotExist
 	}
 }
 
