@@ -29,6 +29,11 @@ const (
 
 	// code= 4000... 上传文件模块的错误
 	UploadFail            MyCode = 4001
+
+	// code= 5000... 回答模块的错误
+	AnswerInvalidParams  MyCode = 5001
+	AnswerDataBaseError  MyCode = 5002
+	AnswerUserIdNotMatch MyCode = 5003
 )
 
 var msgFlags = map[MyCode]string{
@@ -54,6 +59,11 @@ var msgFlags = map[MyCode]string{
 	ProfileSaveFail:         "个人简介保存失败",
 
 	UploadFail:              "上传失败",
+
+
+	AnswerInvalidParams:  "回答请求参数错误",
+	AnswerDataBaseError:  "回答数据库错误",
+	AnswerUserIdNotMatch: "回答者ID和当前用户ID不匹配",
 }
 
 func (c MyCode) Msg() string {

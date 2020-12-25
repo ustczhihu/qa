@@ -8,9 +8,9 @@ import (
 
 // GORMBase struct
 type GORMBase struct {
-	ID        uint64  `json:"-"`
-	CreatedAt string  `json:"-"`
-	UpdatedAt string  `json:"-"`
+	ID        uint64  `json:"id"`
+	CreatedAt string  `json:"createAt"`
+	UpdatedAt string  `json:"updateAt"`
 	DeletedAt *string `sql:"index" json:"-"`
 }
 

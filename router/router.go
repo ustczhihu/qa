@@ -35,5 +35,14 @@ func Init() (r *gin.Engine) {
 		profile.POST("/updateProfile", controller.UpdateProfile)
 		profile.POST("/uploadAvatarUrl", controller.UpLoad)
 	}
+
+	answer := r.Group("/answer")
+	{
+		answer.POST("/add", middleware.JwtToken(), controller.AddAnswer)
+		answer.GET("/", controller.GetAnswers)
+		answer.GET("/:ans_id", controller.GetAnswer)
+		answer.PUT("/:ans_id",middleware.JwtToken(), controller.UpdateAnswer)
+		answer.DELETE("/:ans_id", middleware.JwtToken(), controller.DeleteAnswer)
+	}
 	return
 }
