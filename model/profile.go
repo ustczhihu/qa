@@ -15,7 +15,7 @@ type Profile struct {
 	Gender    int    `form:"gender" json:"gender" gorm:"type:int;DEFAULT:0;"`
 	Desc      string `form:"desc" json:"desc" gorm:"type:varchar(1000)"`
 	AvatarUrl string `form:"avatarUrl" json:"avatarUrl" gorm:"type:varchar(1000)"`
-	UserID    uint64 `form:"userId" json:"userId"`
+	UserID    uint64 `form:"userId" json:"userId,string"`
 }
 
 // 查询porfile by userid

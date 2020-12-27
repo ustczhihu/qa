@@ -5,7 +5,7 @@ mode:
 # 数据库
 db:
   driver: mysql
-  addr: root:123456@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
+  addr: root:root@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
 
 # jwt认证密钥
 jwtKey: salt20201206

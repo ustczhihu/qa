@@ -10,9 +10,9 @@ import (
 type Answer struct {
 	GORMBase
 	Content          string      `json:"content" binding:"required" gorm:"type:varchar(4000);not null" label:"内容"`
-	QuestionID       uint64      `json:"questionId" gorm:"not null" validate:"required" label:"对应问题ID"`
+	QuestionID       uint64      `json:"questionId,string" gorm:"not null" validate:"required" label:"对应问题ID"`
 	Question         Question    `json:"-" gorm:"ForeignKey:QuestionID;associationForeignKey:ID"`
-	AnswerProfileID	 uint64      `json:"userId" binding:"required" gorm:"not null" validate:"required" label:"回答者ID"`
+	AnswerProfileID	 uint64      `json:"userId,string" binding:"required" gorm:"not null" validate:"required" label:"回答者ID"`
 	AnswerProfile    Profile     `json:"creator" gorm:"ForeignKey:AnswerProfileID;associationForeignKey:UserID"`
 	//Type             int         `json:"type"`
 	//Comments         []Comment   `json:"-"`

@@ -8,6 +8,17 @@ import (
 	"strconv"
 )
 
+type QuestionVo struct{
+	model.GORMBase
+	Title       string `json:"title"`
+	Content     string `json:"content"`
+	AnswerCount int    `json:"answerCount"`
+	ViewCount   int    `json:"viewCount"`
+	UserID         uint64  `json:"userId,string"`
+	CreatorProfile model.Profile `json:"creator"`
+	BestAnswer model.Answer `json:"bestAnswer"`
+}
+
 // 创建问题
 func AddQuestion(c *gin.Context) {
 	var q model.Question
@@ -65,6 +76,7 @@ func AddQuestion(c *gin.Context) {
 func GetAllQuestion(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
+	order:=c.Query("order")
 
 	switch {
 	case pageSize >= 100:
@@ -77,15 +89,37 @@ func GetAllQuestion(c *gin.Context) {
 		pageNum = 1
 	}
 
+	switch order {
+	case "answercount":
+		order="answer_count desc"
+	case "viewcount":
+		order="view_count desc"
+	default:
+		order="updated_at desc"
+	}
+
+
 	var qlist []model.Question
 	var code util.MyCode
 	var total int64
-	qlist, total, code = model.GetAllQuestion(pageSize, pageNum)
+
+	qlist, total, code = model.GetAllQuestion(pageSize, pageNum,order)
+
+	var qvolist []QuestionVo
+	for _,q := range qlist {
+		a := model.Answer{QuestionID: q.ID}
+		a.Get()
+		var qvo QuestionVo
+		util.Copy(&qvo,&q)
+		qvo.BestAnswer=a
+		qvolist=append(qvolist,qvo)
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code":    code,
 		"message": code.Msg(),
 		"data": gin.H{
-			"questionList": qlist,
+			"questionList": qvolist,
 			"total":        total,
 		},
 	})
