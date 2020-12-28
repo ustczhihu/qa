@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"qa/config"
-	"qa/dao"
+	"qa/dao/mysql"
+	"qa/dao/redis"
 	"qa/router"
 	util "qa/util"
 )
@@ -23,11 +24,17 @@ func main() {
 	}
 
 	// 数据库连接
-	if err := dao.Init(); err != nil {
+	if err := mysql.Init(); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 		return
 	}
-	defer dao.DB.Close() // 程序退出关闭数据库连接
+	defer mysql.DB.Close() // 程序退出关闭数据库连接
+
+	if err := redis.Init(); err != nil {
+		fmt.Printf("init redis failed, err:%v\n", err)
+		return
+	}
+	defer redis.Close()
 
 	// 是否初始化数据库
 	var shouldInitDB = flag.Bool("initDB", false, "initialize database")

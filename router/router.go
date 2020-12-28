@@ -25,6 +25,10 @@ func Init() (r *gin.Engine) {
 	question := r.Group("/question")
 	{
 		question.POST("/add", middleware.JwtToken(), controller.AddQuestion)
+		question.POST("/update", middleware.JwtToken(), controller.UpdateQuestion)
+		question.POST("/delete", middleware.JwtToken(), controller.DeleteQuestion)
+		question.GET("/queryAllByUserId", middleware.JwtToken(), controller.GetAllQuestionByUserId)
+		question.GET("/queryAllByTitle", middleware.JwtToken(), controller.GetAllQuestionByTitle)
 		question.GET("/queryAll", controller.GetAllQuestion)
 	}
 
@@ -41,7 +45,7 @@ func Init() (r *gin.Engine) {
 		answer.POST("/add", middleware.JwtToken(), controller.AddAnswer)
 		answer.GET("/", controller.GetAnswers)
 		answer.GET("/:ans_id", controller.GetAnswer)
-		answer.PUT("/:ans_id",middleware.JwtToken(), controller.UpdateAnswer)
+		answer.PUT("/:ans_id", middleware.JwtToken(), controller.UpdateAnswer)
 		answer.DELETE("/:ans_id", middleware.JwtToken(), controller.DeleteAnswer)
 	}
 	return

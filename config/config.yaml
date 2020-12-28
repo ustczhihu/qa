@@ -6,6 +6,13 @@ mode:
 db:
   driver: mysql
   addr: root:root@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
+# redis
+redis:
+  host: 192.168.99.100
+  port: 6379
+  password: 123456
+  db: 0
+  pool_size: 100
 
 # jwt认证密钥
 jwtKey: salt20201206

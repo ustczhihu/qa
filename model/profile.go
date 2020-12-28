@@ -3,7 +3,7 @@ package model
 import (
 	"errors"
 	"math/rand"
-	"qa/dao"
+	"qa/dao/mysql"
 	"qa/util"
 	"strconv"
 )
@@ -20,7 +20,7 @@ type Profile struct {
 
 // 查询porfile by userid
 func GetByUserID(userID uint64) (profile Profile, code util.MyCode) {
-	if err := dao.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
+	if err := mysql.DB.Where("user_id = ?", userID).First(&profile).Error; err != nil {
 		code = util.UserDataBaseError
 	} else {
 		code = util.CodeSuccess
@@ -51,7 +51,7 @@ func (p *Profile) BeforeSave() (err error) {
 
 // 创建profile
 func (p *Profile) Create() util.MyCode {
-	if err := dao.DB.Create(&p).Error; err != nil {
+	if err := mysql.DB.Create(&p).Error; err != nil {
 		return util.UserDataBaseError
 	}
 	return util.CodeSuccess
@@ -66,7 +66,7 @@ func (p *Profile) UpdateProfile() util.MyCode{
 	maps["avatar_url"] = p.AvatarUrl
 
 
-	err := dao.DB.Model(&p).Where("user_id = ?", p.UserID).Update(maps).Error
+	err := mysql.DB.Model(&p).Where("user_id = ?", p.UserID).Update(maps).Error
 	if err != nil {
 		return util.ProfileSaveFail
 	}
