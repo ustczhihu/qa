@@ -30,6 +30,7 @@ func Init() (r *gin.Engine) {
 		question.GET("/queryAllByUserId", middleware.JwtToken(), controller.GetAllQuestionByUserId)
 		question.GET("/queryAllByTitle", middleware.JwtToken(), controller.GetAllQuestionByTitle)
 		question.GET("/queryAll", controller.GetAllQuestion)
+		question.GET("/get", controller.GetQuestion)
 	}
 
 	profile := r.Group("/profile")

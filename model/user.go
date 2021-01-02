@@ -2,7 +2,7 @@ package model
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"qa/dao/mysql"
+	dao2 "qa/dao"
 	"qa/util"
 )
 
@@ -16,7 +16,7 @@ type User struct {
 //查询用户是否存在
 func CheckUser(name string) util.MyCode{
 	var user User
-	mysql.DB.Select("id").Where("username=?", name).First(&user)
+	dao2.DB.Select("id").Where("username=?", name).First(&user)
 	if user.ID > 0 {
 		return util.UserExist
 	} else {
@@ -26,7 +26,7 @@ func CheckUser(name string) util.MyCode{
 
 //查询用户
 func (u *User) Get() (user User, code util.MyCode) {
-	if err := mysql.DB.Preload("Profile").Where(&u).First(&user).Error; err != nil {
+	if err := dao2.DB.Preload("Profile").Where(&u).First(&user).Error; err != nil {
 		code = util.UserNotExist
 	} else {
 		code = util.CodeSuccess
@@ -36,7 +36,7 @@ func (u *User) Get() (user User, code util.MyCode) {
 
 //创建用户
 func (u *User) Create() util.MyCode {
-	if err := mysql.DB.Create(&u).Error; err != nil {
+	if err := dao2.DB.Create(&u).Error; err != nil {
 		return util.UserDataBaseError
 	}
 	return util.CodeSuccess
@@ -44,7 +44,7 @@ func (u *User) Create() util.MyCode {
 
 //删除用户
 func (u *User) Delete() util.MyCode {
-	if err := mysql.DB.Delete(&u).Error; err != nil {
+	if err := dao2.DB.Delete(&u).Error; err != nil {
 		return util.UserDataBaseError
 	}
 	return util.CodeSuccess
@@ -52,7 +52,7 @@ func (u *User) Delete() util.MyCode {
 
 //更新用户
 func (u *User) Update() util.MyCode {
-	if err := mysql.DB.Update(&u).Error; err != nil {
+	if err := dao2.DB.Update(&u).Error; err != nil {
 		return util.UserDataBaseError
 	}
 	return util.CodeSuccess
@@ -68,7 +68,7 @@ func (u *User) BeforeSave() (err error) {
 
 // 登录验证
 func (u *User) CheckLogin() (user User, code util.MyCode) {
-	err := mysql.DB.Preload("Profile").Where("username = ?", u.Username).First(&user).Error
+	err := dao2.DB.Preload("Profile").Where("username = ?", u.Username).First(&user).Error
 
 	if err != nil {
 		code = util.UserNotExist

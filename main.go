@@ -4,8 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"qa/config"
-	"qa/dao/mysql"
-	"qa/dao/redis"
+	"qa/dao"
+	"qa/logic"
 	"qa/router"
 	util "qa/util"
 )
@@ -24,17 +24,20 @@ func main() {
 	}
 
 	// 数据库连接
-	if err := mysql.Init(); err != nil {
+	if err := dao.InitDB(); err != nil {
 		fmt.Printf("init mysql failed, err:%v\n", err)
 		return
 	}
-	defer mysql.DB.Close() // 程序退出关闭数据库连接
+	defer dao.DB.Close()
 
-	if err := redis.Init(); err != nil {
+	// redis连接
+	if err := dao.InitRDB(); err != nil {
 		fmt.Printf("init redis failed, err:%v\n", err)
 		return
 	}
-	defer redis.Close()
+	defer dao.RDB.Close()
+
+
 
 	// 是否初始化数据库
 	var shouldInitDB = flag.Bool("initDB", false, "initialize database")
@@ -48,6 +51,11 @@ func main() {
 
 	// 路由
 	r := router.Init()
+
+	//异步记录question中view_count变化
+	go logic.QuestionViewCount()
+	//初始化question中view_count
+	logic.InitQuestionViewCountChan<-1
 
 	// 运行！！！
 	if err := r.Run(config.Conf.Address); err != nil {

@@ -2,49 +2,49 @@ package main
 
 import (
 	"fmt"
-	"qa/dao/mysql"
+	"qa/dao"
 	"qa/model"
 	"qa/util"
 )
 
 func Init() (err error) {
-	if (mysql.DB.HasTable(&model.User{})) {
+	if (dao.DB.HasTable(&model.User{})) {
 		fmt.Println("db has the table user, so drop it.")
-		if err = mysql.DB.DropTable(&model.User{}).Error; err != nil {
+		if err = dao.DB.DropTable(&model.User{}).Error; err != nil {
 			return
 		}
 	}
 
-	if (mysql.DB.HasTable(&model.Profile{})) {
+	if (dao.DB.HasTable(&model.Profile{})) {
 		fmt.Println("db has the table profile, so drop it.")
-		if err = mysql.DB.DropTable(&model.Profile{}).Error; err != nil {
+		if err = dao.DB.DropTable(&model.Profile{}).Error; err != nil {
 			return
 		}
 	}
 
-	if (mysql.DB.HasTable(&model.Question{})) {
+	if (dao.DB.HasTable(&model.Question{})) {
 		fmt.Println("db has the table question, so drop it.")
-		if err = mysql.DB.DropTable(&model.Question{}).Error; err != nil {
+		if err = dao.DB.DropTable(&model.Question{}).Error; err != nil {
 			return
 		}
 	}
-	if (mysql.DB.HasTable(&model.Answer{})) {
+	if (dao.DB.HasTable(&model.Answer{})) {
 		fmt.Println("db has the table answer, so drop it.")
-		if err = mysql.DB.DropTable(&model.Answer{}).Error; err != nil {
+		if err = dao.DB.DropTable(&model.Answer{}).Error; err != nil {
 			return
 		}
 	}
 
-	if err = mysql.DB.AutoMigrate(&model.User{}).Error; err != nil {
+	if err = dao.DB.AutoMigrate(&model.User{}).Error; err != nil {
 		return
 	}
-	if err = mysql.DB.AutoMigrate(&model.Profile{}).Error; err != nil {
+	if err = dao.DB.AutoMigrate(&model.Profile{}).Error; err != nil {
 		return
 	}
-	if err = mysql.DB.AutoMigrate(&model.Question{}).Error; err != nil {
+	if err = dao.DB.AutoMigrate(&model.Question{}).Error; err != nil {
 		return
 	}
-	if err = mysql.DB.AutoMigrate(&model.Answer{}).Error; err != nil {
+	if err = dao.DB.AutoMigrate(&model.Answer{}).Error; err != nil {
 		return
 	}
 

@@ -2,7 +2,7 @@ package model
 
 import (
 	"log"
-	"qa/dao/mysql"
+	"qa/dao"
 	"qa/util"
 )
 
@@ -24,7 +24,7 @@ type Answer struct {
 
 // Create func 创建回答
 func (a *Answer) Create() util.MyCode {
-	if err := mysql.DB.Create(&a).Error; err != nil {
+	if err := dao.DB.Create(&a).Error; err != nil {
 		return util.AnswerDataBaseError
 	}
 	return util.CodeSuccess
@@ -32,7 +32,7 @@ func (a *Answer) Create() util.MyCode {
 
 // Delete func 删除回答
 func (a *Answer) Delete() util.MyCode {
-	if err := mysql.DB.Delete(&a).Error; err != nil {
+	if err := dao.DB.Delete(&a).Error; err != nil {
 		return util.AnswerDataBaseError
 	}
 	return util.CodeSuccess
@@ -40,7 +40,7 @@ func (a *Answer) Delete() util.MyCode {
 
 // Update func 更新回答
 func (a *Answer) Update() util.MyCode {
-	if err := mysql.DB.Model(&a).Updates(&a).Error; err != nil {
+	if err := dao.DB.Model(&a).Updates(&a).Error; err != nil {
 		return util.AnswerDataBaseError
 	}
 	return util.CodeSuccess
@@ -49,7 +49,7 @@ func (a *Answer) Update() util.MyCode {
 // Get func 根据answerid查询特定的回答
 func (a *Answer) Get() (code util.MyCode) {
 
-	if err := mysql.DB.Where(&a).Preload("Question").Preload("AnswerProfile").First(&a).Error; err != nil {
+	if err := dao.DB.Where(&a).Preload("Question").Preload("AnswerProfile").First(&a).Error; err != nil {
 		code = util.AnswerDataBaseError
 		return
 	}
@@ -61,7 +61,7 @@ func (a *Answer) Get() (code util.MyCode) {
 // GetList func 根据问题和用户查询回答列表
 func (a *Answer) GetList(pageSize int, pageNum int) (answers []Answer, total int64, code util.MyCode) {
 
-	err := mysql.DB.Preload("Question").Preload("AnswerProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&answers).Count(&total).Error;
+	err := dao.DB.Preload("Question").Preload("AnswerProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&answers).Count(&total).Error;
 	if err != nil {
 		code = util.AnswerDataBaseError
 		return
@@ -73,7 +73,7 @@ func (a *Answer) GetList(pageSize int, pageNum int) (answers []Answer, total int
 // GetOrderList func 根据问题和用户查询回答列表(按照指定的order排列)
 func (a *Answer) GetOrderList(limit int, offset int, order string) (answers []Answer, total int64, code util.MyCode) {
 
-	if err := mysql.DB.Offset(offset).Limit(limit).Preload("Question").Preload("AnswerProfile").Order(order).Find(&answers, a).Error; err != nil {
+	if err := dao.DB.Offset(offset).Limit(limit).Preload("Question").Preload("AnswerProfile").Order(order).Find(&answers, a).Error; err != nil {
 		log.Print(err)
 	}
 

@@ -1,8 +1,10 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"qa/logic"
 	"qa/model"
 	util "qa/util"
 	"strconv"
@@ -18,6 +20,8 @@ type QuestionVo struct {
 	CreatorProfile model.Profile `json:"creator"`
 	BestAnswer     model.Answer  `json:"bestAnswer"`
 }
+
+
 
 //创建问题
 func AddQuestion(c *gin.Context) {
@@ -70,6 +74,8 @@ func AddQuestion(c *gin.Context) {
 		"code":    code,
 		"message": code.Msg(),
 	})
+
+	logic.CreateQuestionViewCountChan<-q.ID
 }
 
 //更新问题
@@ -265,7 +271,7 @@ func GetAllQuestionByTitle(c *gin.Context) {
 	})
 }
 
-// 查询所有问题
+//查询所有问题
 func GetAllQuestion(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
@@ -316,3 +322,24 @@ func GetAllQuestion(c *gin.Context) {
 		},
 	})
 }
+
+//查询单个问题详情
+func GetQuestion(c *gin.Context){
+	qid,_:= strconv.ParseUint(c.Query("id"), 10 ,64)
+
+	var q model.Question
+	q.ID=qid
+	question,code :=q.Get()
+	c.JSON(
+		http.StatusOK, gin.H{
+			"code":    code,
+			"message": code.Msg(),
+			"data":question,
+		},
+	)
+	if code==util.CodeSuccess{
+		fmt.Println("!!!!!!!!!!!!!!!!!")
+		logic.UpdateQuestionViewCountChan <- q.ID
+	}
+}
+
