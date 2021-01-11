@@ -98,8 +98,10 @@ func DeleteAnswer(c *gin.Context) {
 	var code util.MyCode
 
 	var id = c.Param("ans_id")
-
 	a.ID, _ = strconv.ParseUint(id,10,64)
+
+	println("request answerId: ",a.ID)
+
 	if err := c.ShouldBind(&a); err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    util.AnswerInvalidParams,
@@ -171,8 +173,7 @@ func GetAnswers(c *gin.Context) {
 
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
-	var qId = c.Param("q_id")
-	questionID, _ := strconv.ParseUint(qId,10,64)
+	questionID, _ := strconv.ParseUint(c.Query("question_id"),10,64)
 	a.QuestionID = questionID
 
 	switch {

@@ -31,6 +31,7 @@ FROM scratch
 
 # 配置文件复制到容器中
 COPY ./config /config
+COPY ./log /log
 
 # 从builder镜像中把/builder/qasystem 拷贝到当前目录
 COPY --from=builder /build/qasystem /

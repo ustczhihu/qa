@@ -9,10 +9,10 @@ import (
 // Answer回答
 type Answer struct {
 	GORMBase
-	Content          string      `json:"content" binding:"required" gorm:"type:varchar(4000);not null" label:"内容"`
+	Content          string      `json:"content" gorm:"type:varchar(4000);not null" label:"内容"`
 	QuestionID       uint64      `json:"questionId,string" gorm:"not null" validate:"required" label:"对应问题ID"`
 	Question         Question    `json:"-" gorm:"ForeignKey:QuestionID;associationForeignKey:ID"`
-	AnswerProfileID	 uint64      `json:"userId,string" binding:"required" gorm:"not null" validate:"required" label:"回答者ID"`
+	AnswerProfileID	 uint64      `json:"userId,string" gorm:"not null" validate:"required" label:"回答者ID"`
 	AnswerProfile    Profile     `json:"creator" gorm:"ForeignKey:AnswerProfileID;associationForeignKey:UserID"`
 	//Type             int         `json:"type"`
 	//Comments         []Comment   `json:"-"`
@@ -61,7 +61,7 @@ func (a *Answer) Get() (code util.MyCode) {
 // GetList func 根据问题和用户查询回答列表
 func (a *Answer) GetList(pageSize int, pageNum int) (answers []Answer, total int64, code util.MyCode) {
 
-	err := dao.DB.Preload("Question").Preload("AnswerProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&answers).Count(&total).Error;
+	err := dao.DB.Preload("Question").Preload("AnswerProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Where("question_id=?", a.QuestionID).Find(&answers).Count(&total).Error;
 	if err != nil {
 		code = util.AnswerDataBaseError
 		return
