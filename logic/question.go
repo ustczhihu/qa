@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-//热榜计算规则：score=(create_time%1e8)/1e5+view_count+5*answer_count
+//热榜计算规则：score=(create_time%1e8)/1e3+view_count+5*answer_count
 
 const (
 	ZSetKey      = "question:zset:"
@@ -45,7 +45,8 @@ func QusetionRedis2Mysql() {
 				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HViewCount, q.ViewCount)
 				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnwserCount, q.AnswerCount)
 				//初始化热榜
-				score := (float64)((util.Strtime2Int(q.CreatedAt) % 1e8)) / 1e5
+				score := (float64)((util.Strtime2Int(q.CreatedAt) % 1e8)) / 1e3
+				//fmt.Println(score)
 				dao.RDB.ZAdd(ZSetKey, redis.Z{Score: score + (float64)(q.ViewCount+5*q.AnswerCount), Member: strconv.FormatUint(q.ID, 10)})
 			}
 
