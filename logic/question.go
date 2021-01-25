@@ -10,14 +10,13 @@ import (
 	"strconv"
 )
 
-//热榜计算规则：score=(create_time%1e8)/1e3+view_count+5*answer_count
-//score=create_time+（view_count+10*answer_count）*432
+//热榜计算规则score=create_time+（view_count+10*answer_count）*432
 const (
 	ZSetKey      = "question:zset:"
 	HSetKey      = "question:hset:"
 	SetKey       = "question:set:"
 	HViewCount   = "view_count"
-	HAnwserCount = "answer_count"
+	HAnswerCount = "answer_count"
 
 	scorePerView=432
 )
@@ -46,7 +45,7 @@ func QusetionRedis2Mysql() {
 				//redis事务
 				pipeline := dao.RDB.TxPipeline()
 				pipeline.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HViewCount, q.ViewCount)
-				pipeline.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnwserCount, q.AnswerCount)
+				pipeline.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnswerCount, q.AnswerCount)
 				//初始化热榜
 				score := (float64)(util.Strtime2Int(q.CreatedAt))
 				//fmt.Println(util.Strtime2Int(q.CreatedAt))
@@ -122,7 +121,6 @@ func QuestionViewCount() {
 
 		//初始化新问题的浏览量
 		case qid := <-CreateQuestionViewCountChan:
-			//err := dao.RDB.ZAdd(ZSetKey, redis.Z{Score: 0, Member: strconv.FormatUint(qid, 10)}).Err()
 			err := dao.RDB.HSet(HSetKey+strconv.FormatUint(qid, 10), HViewCount, 0).Err()
 			if err != nil {
 				util.Log.Error(err)
@@ -142,7 +140,7 @@ func QuestionAnswerCount() {
 			//redis事务
 			pipeline := dao.RDB.TxPipeline()
 			//更新answer_count
-			pipeline.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HAnwserCount, 1).Err()
+			pipeline.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HAnswerCount, 1).Err()
 			//更新热榜分数
 			pipeline.ZIncrBy(ZSetKey, 10*scorePerView, strconv.FormatUint(qid, 10))
 			_,err:=pipeline.Exec()
@@ -167,7 +165,7 @@ func QuestionAnswerCount() {
 
 		//初始化新问题的浏览量
 		case qid := <-CreateQuestionAnswerCountChan:
-			err := dao.RDB.HSet(HSetKey+strconv.FormatUint(qid, 10), HAnwserCount, 0).Err()
+			err := dao.RDB.HSet(HSetKey+strconv.FormatUint(qid, 10), HAnswerCount, 0).Err()
 			if err != nil {
 				util.Log.Error(err)
 			}
