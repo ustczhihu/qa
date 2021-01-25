@@ -11,7 +11,7 @@ import (
 )
 
 //热榜计算规则：score=(create_time%1e8)/1e3+view_count+5*answer_count
-
+//score=create_time+（view_count+10*answer_count）*432
 const (
 	ZSetKey      = "question:zset:"
 	HSetKey      = "question:hset:"
@@ -45,9 +45,9 @@ func QusetionRedis2Mysql() {
 				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HViewCount, q.ViewCount)
 				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnwserCount, q.AnswerCount)
 				//初始化热榜
-				score := (float64)((util.Strtime2Int(q.CreatedAt) % 1e8)) / 1e3
-				//fmt.Println(score)
-				dao.RDB.ZAdd(ZSetKey, redis.Z{Score: score + (float64)(q.ViewCount+5*q.AnswerCount), Member: strconv.FormatUint(q.ID, 10)})
+				score := (float64)(util.Strtime2Int(q.CreatedAt))
+				//fmt.Println(util.Strtime2Int(q.CreatedAt))
+				dao.RDB.ZAdd(ZSetKey, redis.Z{Score: score + (float64)((q.ViewCount+10*q.AnswerCount)*432), Member: strconv.FormatUint(q.ID, 10)})
 			}
 
 		//将(qid,incrCount)列表更新到mysql中
@@ -95,7 +95,7 @@ func QuestionViewCount() {
 			}
 
 			//更新热榜分数
-			dao.RDB.ZIncrBy(ZSetKey, 1, strconv.FormatUint(qid, 10))
+			dao.RDB.ZIncrBy(ZSetKey, 432, strconv.FormatUint(qid, 10))
 
 			//记录要更新的(qid,incrCount)，延迟更新
 			if v, ok := set[qid]; ok {
@@ -138,7 +138,7 @@ func QuestionAnswerCount() {
 			}
 
 			//更新热榜分数
-			dao.RDB.ZIncrBy(ZSetKey, 5, strconv.FormatUint(qid, 10))
+			dao.RDB.ZIncrBy(ZSetKey, 10*432, strconv.FormatUint(qid, 10))
 
 			//记录要更新的(qid,incrCount)，延迟更新
 			if v, ok := set[qid]; ok {
