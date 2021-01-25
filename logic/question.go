@@ -18,6 +18,8 @@ const (
 	SetKey       = "question:set:"
 	HViewCount   = "view_count"
 	HAnwserCount = "answer_count"
+
+	scorePerView=432
 )
 
 var InitQuestionChan = make(chan interface{})
@@ -41,13 +43,19 @@ func QusetionRedis2Mysql() {
 				return
 			}
 			for _, q := range qlist {
-				//score, _ := strconv.ParseFloat(strconv.Itoa(q.ViewCount), 64)
-				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HViewCount, q.ViewCount)
-				dao.RDB.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnwserCount, q.AnswerCount)
+				//redis事务
+				pipeline := dao.RDB.TxPipeline()
+				pipeline.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HViewCount, q.ViewCount)
+				pipeline.HSet(HSetKey+strconv.FormatUint(q.ID, 10), HAnwserCount, q.AnswerCount)
 				//初始化热榜
 				score := (float64)(util.Strtime2Int(q.CreatedAt))
 				//fmt.Println(util.Strtime2Int(q.CreatedAt))
-				dao.RDB.ZAdd(ZSetKey, redis.Z{Score: score + (float64)((q.ViewCount+10*q.AnswerCount)*432), Member: strconv.FormatUint(q.ID, 10)})
+				pipeline.ZAdd(ZSetKey, redis.Z{Score: score + (float64)((q.ViewCount+10*q.AnswerCount)*scorePerView), Member: strconv.FormatUint(q.ID, 10)})
+				_,err:=pipeline.Exec()
+				if err != nil {
+					util.Log.Error(err)
+					return
+				}
 			}
 
 		//将(qid,incrCount)列表更新到mysql中
@@ -86,16 +94,17 @@ func QuestionViewCount() {
 		//增加浏览量
 		case qid := <-UpdateQuestionViewCountChan:
 			count++
-			//err := dao.RDB.ZIncrBy(ZSetKey, 1, strconv.FormatUint(qid, 10)).Err()
-			//e.g. key=question3109701881430017
-			err := dao.RDB.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HViewCount, 1).Err()
+			//redis事务
+			pipeline := dao.RDB.TxPipeline()
+			//更新view_count
+			pipeline.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HViewCount, 1)
+			//更新热榜分数
+			pipeline.ZIncrBy(ZSetKey, scorePerView, strconv.FormatUint(qid, 10))
+			_,err:=pipeline.Exec()
 			if err != nil {
 				util.Log.Error(err)
 				return
 			}
-
-			//更新热榜分数
-			dao.RDB.ZIncrBy(ZSetKey, 432, strconv.FormatUint(qid, 10))
 
 			//记录要更新的(qid,incrCount)，延迟更新
 			if v, ok := set[qid]; ok {
@@ -130,15 +139,17 @@ func QuestionAnswerCount() {
 		//增加回答量
 		case qid := <-UpdateQuestionAnswerCountChan:
 			count++
-			//e.g. key=question3109701881430017
-			err := dao.RDB.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HAnwserCount, 1).Err()
+			//redis事务
+			pipeline := dao.RDB.TxPipeline()
+			//更新answer_count
+			pipeline.HIncrBy(HSetKey+strconv.FormatUint(qid, 10), HAnwserCount, 1).Err()
+			//更新热榜分数
+			pipeline.ZIncrBy(ZSetKey, 10*scorePerView, strconv.FormatUint(qid, 10))
+			_,err:=pipeline.Exec()
 			if err != nil {
 				util.Log.Error(err)
 				return
 			}
-
-			//更新热榜分数
-			dao.RDB.ZIncrBy(ZSetKey, 10*432, strconv.FormatUint(qid, 10))
 
 			//记录要更新的(qid,incrCount)，延迟更新
 			if v, ok := set[qid]; ok {
