@@ -46,7 +46,7 @@ func (q *Question) Delete() util.MyCode {
 
 //更新问题
 func (q *Question) Update() util.MyCode {
-	if err := dao.DB.Update(&q).Error; err != nil {
+	if err := dao.DB.Model(&q).Update(&q).Error; err != nil {
 		return util.QuestionDataBaseError
 	}
 	return util.CodeSuccess
@@ -130,9 +130,9 @@ func GetAllQuestionByTitle(pageSize int, pageNum int, order string, title string
 }
 
 //浏览数+1
-func (q *Question) IncrView() (err error) {
+func (q *Question) IncrView(increCount int) (err error) {
 
-	if err := dao.DB.Model(&q).UpdateColumn("view_count", gorm.Expr("view_count + ?", 1)).Error; err != nil {
+	if err := dao.DB.Model(&q).UpdateColumn("view_count", gorm.Expr("view_count + ?", increCount)).Error; err != nil {
 		util.Log.Error(err)
 	}
 	return

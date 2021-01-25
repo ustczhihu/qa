@@ -5,10 +5,10 @@ mode:
 # 数据库
 db:
   driver: mysql
-  addr: root:123456@tcp(8.136.142.201:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
+  addr: root:root@tcp(localhost:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
 # redis
 redis:
-  host: 8.136.142.201
+  host: 192.168.99.100
   port: 6379
   password: 123456
   db: 0

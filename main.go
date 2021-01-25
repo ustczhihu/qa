@@ -54,6 +54,7 @@ func main() {
 
 	//异步记录question中view_count变化
 	go logic.QuestionViewCount()
+	go logic.QusetionViewCount2Mysql()
 	//初始化question中view_count
 	logic.InitQuestionViewCountChan<-1
 
