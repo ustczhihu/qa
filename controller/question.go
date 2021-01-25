@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"qa/logic"
@@ -20,8 +19,6 @@ type QuestionVo struct {
 	CreatorProfile model.Profile `json:"creator"`
 	BestAnswer     model.Answer  `json:"bestAnswer"`
 }
-
-
 
 //创建问题
 func AddQuestion(c *gin.Context) {
@@ -75,7 +72,8 @@ func AddQuestion(c *gin.Context) {
 		"message": code.Msg(),
 	})
 
-	logic.CreateQuestionViewCountChan<-q.ID
+	logic.CreateQuestionViewCountChan <- q.ID
+	logic.CreateQuestionAnswerCountChan <- q.ID
 }
 
 //更新问题
@@ -324,22 +322,53 @@ func GetAllQuestion(c *gin.Context) {
 }
 
 //查询单个问题详情
-func GetQuestion(c *gin.Context){
-	qid,_:= strconv.ParseUint(c.Query("id"), 10 ,64)
+func GetQuestion(c *gin.Context) {
+	qid, _ := strconv.ParseUint(c.Query("id"), 10, 64)
 
 	var q model.Question
-	q.ID=qid
-	question,code :=q.Get()
+	q.ID = qid
+	code := q.Get()
 	c.JSON(
 		http.StatusOK, gin.H{
 			"code":    code,
 			"message": code.Msg(),
-			"data":question,
+			"data":    q,
 		},
 	)
-	if code==util.CodeSuccess{
-		fmt.Println("!!!!!!!!!!!!!!!!!")
+	if code == util.CodeSuccess {
 		logic.UpdateQuestionViewCountChan <- q.ID
 	}
 }
 
+//查询问题热榜
+func GetQuestionHotList(c *gin.Context) {
+	qlist := logic.QuestionHotList()
+
+	if qlist != nil {
+		var qvolist []QuestionVo
+		for _, q := range qlist {
+			a := model.Answer{QuestionID: q.ID}
+			a.Get()
+			var qvo QuestionVo
+			util.Copy(&qvo, &q)
+			qvo.BestAnswer = a
+			qvolist = append(qvolist, qvo)
+		}
+
+		c.JSON(
+			http.StatusOK, gin.H{
+				"code":    util.CodeSuccess,
+				"message": util.CodeSuccess.Msg(),
+				"data":    qvolist,
+			},
+		)
+	} else {
+		c.JSON(
+			http.StatusOK, gin.H{
+				"code":    util.CodeError,
+				"message": util.CodeError.Msg(),
+				"data":    qlist,
+			},
+		)
+	}
+}

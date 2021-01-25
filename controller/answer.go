@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"qa/logic"
 	"qa/model"
 	util "qa/util"
 	"strconv"
@@ -45,6 +46,9 @@ func AddAnswer(c *gin.Context) {
 		"message": code.Msg(),
 		"data": a,
 	})
+
+	//向question的channel发送消息以增加回答数
+	logic.UpdateQuestionAnswerCountChan<-a.QuestionID
 }
 
 // UpdateAnswer func 更新回答

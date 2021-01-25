@@ -53,19 +53,17 @@ func (q *Question) Update() util.MyCode {
 }
 
 //查询问题
-func (q *Question) Get() (question Question, code util.MyCode) {
+func (q *Question) Get() util.MyCode {
 	if err := dao.DB.Where(&q).Preload("CreatorProfile").
-		First(&question).Error; err != nil {
-		code = util.QuestionDataBaseError
-		return
+		First(&q).Error; err != nil {
+		return util.QuestionDataBaseError
 	}
-	code = util.CodeSuccess
-	return
+	return util.CodeSuccess
 }
 
 //查询所有问题id
 func GetAllQuestionId() (questionList []Question, code util.MyCode) {
-	err := dao.DB.Select("id,view_count").
+	err := dao.DB.Select("id,view_count,answer_count,created_at").
 		Find(&questionList).
 		Error
 	if err != nil {
@@ -129,10 +127,19 @@ func GetAllQuestionByTitle(pageSize int, pageNum int, order string, title string
 	return
 }
 
-//浏览数+1
-func (q *Question) IncrView(increCount int) (err error) {
+//更新问题浏览数
+func (q *Question) IncrView(incrCount int) (err error) {
 
-	if err := dao.DB.Model(&q).UpdateColumn("view_count", gorm.Expr("view_count + ?", increCount)).Error; err != nil {
+	if err := dao.DB.Model(&q).UpdateColumn("view_count", gorm.Expr("view_count + ?", incrCount)).Error; err != nil {
+		util.Log.Error(err)
+	}
+	return
+}
+
+//更新问题回答数
+func (q *Question) IncrAnswer(increCount int) (err error) {
+
+	if err := dao.DB.Model(&q).UpdateColumn("answer_count", gorm.Expr("answer_count + ?", increCount)).Error; err != nil {
 		util.Log.Error(err)
 	}
 	return

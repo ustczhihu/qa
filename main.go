@@ -52,11 +52,12 @@ func main() {
 	// 路由
 	r := router.Init()
 
-	//异步记录question中view_count变化
+	//异步记录question中view_count/answer_count变化
 	go logic.QuestionViewCount()
-	go logic.QusetionViewCount2Mysql()
+	go logic.QuestionAnswerCount()
+	go logic.QusetionRedis2Mysql()
 	//初始化question中view_count
-	logic.InitQuestionViewCountChan<-1
+	logic.InitQuestionChan<-1
 
 	// 运行！！！
 	if err := r.Run(config.Conf.Address); err != nil {
