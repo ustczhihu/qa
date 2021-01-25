@@ -20,13 +20,21 @@ User Story 2
 - [x] 修改回答
 - [x] 删除回答
 
+User Story 3
+
+- [x] 热门问题列表
+- [x] 对回答点赞和踩
+- [] 个人中心查看自己已发布的问题
+- [] 个人中心查看自己的回答
+- [] 个人中心查看自己点赞的回答
+
 ## 技术选型
 
 | 名称      | 地址                                           | 作用            |
 | --------- | ---------------------------------------------- | --------------- |
 | gin       | https://github.com/gin-gonic/gin               | web 框架        |
 | gorm      | https://github.com/jinzhu/gorm                 | orm 映射框架    |
-| mysql     | https://github.com/go-sql-driver/mysql         | 数据库          |
+| mysql     | https://github.com/go-sql-driver/mysql         | mysql 数据库    |
 | viper     | https://github.com/spf13/viper                 | 配置管理        |
 | jwt-go    | https://github.com/dgrijalva/jwt-go            | jwt 认证        |
 | snoyflake | https://github.com/sony/sonyflake              | 雪花算法唯一 ID |
@@ -34,6 +42,7 @@ User Story 2
 | logrus    | https://github.com/sirupsen/logrus             | 日志处理        |
 | bcrypt    | https://golang.org/x/crypto/bcrypt             | 密码处理        |
 | validator | https://github.com/go-playground/validator/v10 | 数据校验        |
+| go-redis  | https://github.com/go-redis/redis              | redis 数据库    |
 
 ## 项目结构
 
@@ -80,6 +89,14 @@ go env -w GOPROXY=https://goproxy.cn,direct
 db:
   driver: mysql
   addr: yourusername:yourpassword@tcp(127.0.0.1:3306)/qasystem?charset=utf8mb4&parseTime=True&loc=Local
+
+# redis
+redis:
+  host: localhost
+  port: 6379
+  password: yourpassword
+  db: 0
+  pool_size: 100
 
 # jwt认证密钥
 jwtKey: yourjwtkey
