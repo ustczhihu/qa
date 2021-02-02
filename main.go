@@ -55,10 +55,14 @@ func main() {
 	//异步记录question中view_count/answer_count变化
 	go logic.QuestionViewCount()
 	go logic.QuestionAnswerCount()
-	go logic.QusetionRedis2Mysql()
+	go logic.QuestionRedis2Mysql()
+	//异步记录answer中vote变化
+	go logic.VoteForAnswer()
+	go logic.VoteRedis2Mysql()
 	//初始化question中view_count
 	logic.InitQuestionChan<-1
-
+	//初始化answer中的vote
+	logic.InitVoteChan<-1
 	// 运行！！！
 	if err := r.Run(config.Conf.Address); err != nil {
 		fmt.Printf("run server failed, err:%v\n", err)

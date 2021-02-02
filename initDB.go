@@ -34,6 +34,12 @@ func Init() (err error) {
 			return
 		}
 	}
+	if (dao.DB.HasTable(&model.AnswerVote{})) {
+		fmt.Println("db has the table answerVote, so drop it.")
+		if err = dao.DB.DropTable(&model.AnswerVote{}).Error; err != nil {
+			return
+		}
+	}
 
 	if err = dao.DB.AutoMigrate(&model.User{}).Error; err != nil {
 		return
@@ -45,6 +51,9 @@ func Init() (err error) {
 		return
 	}
 	if err = dao.DB.AutoMigrate(&model.Answer{}).Error; err != nil {
+		return
+	}
+	if err = dao.DB.AutoMigrate(&model.AnswerVote{}).Error; err != nil {
 		return
 	}
 

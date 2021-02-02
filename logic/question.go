@@ -12,7 +12,7 @@ import (
 
 //热榜计算规则score=create_time+（view_count+10*answer_count）*432
 const (
-	ZSetKey      = "question:zset:"
+	ZSetKey      = "question:zset"
 	HSetKey      = "question:hset:"
 	SetKey       = "question:set:"
 	HViewCount   = "view_count"
@@ -31,7 +31,7 @@ var UpdateQuestionAnswerCountChan = make(chan uint64, 100)
 var CreateQuestionAnswerCountChan = make(chan uint64, 100)
 var AnswerCountWrite2SQLchan = make(chan map[uint64]int)
 
-func QusetionRedis2Mysql() {
+func QuestionRedis2Mysql() {
 	for {
 		select {
 		//从数据库中读入(qid,view_count)/(qid,answer_count)列表

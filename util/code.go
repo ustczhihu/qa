@@ -34,6 +34,10 @@ const (
 	AnswerInvalidParams  MyCode = 5001
 	AnswerDataBaseError  MyCode = 5002
 	AnswerUserIdNotMatch MyCode = 5003
+
+	// code= 6000... 投票模块的错误
+	VoteInvalidParams  MyCode = 6001
+	VoteDataBaseError  MyCode = 6002
 )
 
 var msgFlags = map[MyCode]string{
@@ -64,6 +68,9 @@ var msgFlags = map[MyCode]string{
 	AnswerInvalidParams:  "回答请求参数错误",
 	AnswerDataBaseError:  "回答数据库错误",
 	AnswerUserIdNotMatch: "回答者ID和当前用户ID不匹配",
+
+	VoteInvalidParams:"投票请求参数错误",
+	VoteDataBaseError:"投票数据库错误",
 }
 
 func (c MyCode) Msg() string {

@@ -50,5 +50,10 @@ func Init() (r *gin.Engine) {
 		answer.PUT("/:ans_id", middleware.JwtToken(), controller.UpdateAnswer)
 		answer.DELETE("/:ans_id", middleware.JwtToken(), controller.DeleteAnswer)
 	}
+
+	vote := r.Group("/vote")
+	{
+		vote.POST("/update", middleware.JwtToken(), controller.VoteForAnswer)
+	}
 	return
 }
