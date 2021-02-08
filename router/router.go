@@ -32,6 +32,9 @@ func Init() (r *gin.Engine) {
 		question.GET("/queryHotList",controller.GetQuestionHotList)
 		question.GET("/queryAll", controller.GetAllQuestion)
 		question.GET("/get", controller.GetQuestion)
+		question.GET("/queryAnswerListByScore", controller.GetAnswerListByScore)
+		question.GET("/queryVoteInfo",  middleware.JwtToken(),controller.GetVoteInfo)
+		question.GET("/queryAnswerListByUserId",  middleware.JwtToken(),controller.GetAnswerListByUserId)
 	}
 
 	profile := r.Group("/profile")

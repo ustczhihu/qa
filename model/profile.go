@@ -6,13 +6,14 @@ import (
 	"qa/dao"
 	"qa/util"
 	"strconv"
+	"time"
 )
 
 // Profile 用户简介
 type Profile struct {
 	GORMBase
 	Nickname  string `form:"nickname" json:"nickname" gorm:"type:varchar(500)"`
-	Gender    int    `form:"gender" json:"gender" gorm:"type:int;DEFAULT:0;"`
+	Gender    int    `form:"gender" json:"gender,string" gorm:"type:int;DEFAULT:0;"`
 	Desc      string `form:"desc" json:"desc" gorm:"type:varchar(1000)"`
 	AvatarUrl string `form:"avatarUrl" json:"avatarUrl" gorm:"type:varchar(1000)"`
 	UserID    uint64 `form:"userId" json:"userId,string"`
@@ -38,6 +39,7 @@ func (p *Profile) BeforeSave() (err error) {
 		p.ID, _ = util.GetID()
 	}
 	if p.Nickname == "" {
+		rand.Seed(time.Now().Unix())
 		p.Nickname = "user_" + strconv.Itoa(rand.Int())
 	}
 	if p.Desc == "" {

@@ -61,7 +61,14 @@ func (a *Answer) Get() (code util.MyCode) {
 // GetList func 根据问题和用户查询回答列表
 func (a *Answer) GetList(pageSize int, pageNum int) (answers []Answer, total int64, code util.MyCode) {
 
-	err := dao.DB.Preload("Question").Preload("AnswerProfile").Limit(pageSize).Offset((pageNum - 1) * pageSize).Where("question_id=?", a.QuestionID).Find(&answers).Count(&total).Error;
+	err := dao.DB.Preload("Question").Preload("AnswerProfile").
+		Limit(pageSize).
+		Offset((pageNum - 1) * pageSize).
+		Order("updated_at desc").
+		Where("question_id=?", a.QuestionID).
+		Find(&answers).
+		Error
+	err = dao.DB.Model(Answer{}).Where("question_id=?", a.QuestionID).Count(&total).Error
 	if err != nil {
 		code = util.AnswerDataBaseError
 		return
@@ -80,3 +87,33 @@ func (a *Answer) GetOrderList(limit int, offset int, order string) (answers []An
 	return
 }
 
+//查询所有问题id
+func GetAllAnswerId() (answerList []Answer, code util.MyCode) {
+	err := dao.DB.Select("id,question_id").
+		Find(&answerList).
+		Error
+	if err != nil {
+		code = util.AnswerDataBaseError
+		return
+	}
+	code = util.CodeSuccess
+	return
+}
+
+func GetAnswerListByUserId(userId uint64,pageSize int64, pageNum int64) (answers []Answer, total int64, code util.MyCode) {
+
+	err := dao.DB.Preload("Question").Preload("AnswerProfile").
+		Limit(pageSize).
+		Offset((pageNum - 1) * pageSize).
+		Order("updated_at desc").
+		Where("answer_profile_id=?", userId).
+		Find(&answers).
+		Error
+	err = dao.DB.Model(Answer{}).Where("answer_profile_id=?", userId).Count(&total).Error
+	if err != nil {
+		code = util.AnswerDataBaseError
+		return
+	}
+	code = util.CodeSuccess
+	return
+}

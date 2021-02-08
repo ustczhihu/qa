@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"qa/dao"
 	"qa/logic"
 	"qa/model"
 	util "qa/util"
@@ -18,6 +19,12 @@ type QuestionVo struct {
 	UserID         uint64        `json:"userId,string"`
 	CreatorProfile model.Profile `json:"creator"`
 	BestAnswer     model.Answer  `json:"bestAnswer"`
+}
+
+type QuestionHotListVo struct {
+	model.GORMBase
+	Title          string        `json:"title"`
+	Score 			float64 	`json:"score"`
 }
 
 //创建问题
@@ -71,7 +78,7 @@ func AddQuestion(c *gin.Context) {
 		"code":    code,
 		"message": code.Msg(),
 	})
-
+	logic.InitQuestionScore(q)
 	logic.CreateQuestionViewCountChan <- q.ID
 	logic.CreateQuestionAnswerCountChan <- q.ID
 }
@@ -174,7 +181,7 @@ func GetAllQuestionByUserId(c *gin.Context) {
 	case pageSize >= 100:
 		pageSize = 100
 	case pageSize <= 0:
-		pageSize = 10
+		pageSize = 5
 	}
 
 	if pageNum == 0 {
@@ -198,8 +205,9 @@ func GetAllQuestionByUserId(c *gin.Context) {
 
 	var qvolist []QuestionVo
 	for _, q := range qlist {
-		a := model.Answer{QuestionID: q.ID}
-		a.Get()
+		//a := model.Answer{QuestionID: q.ID}
+		//a.Get()
+		a:=logic.GetBestAnswer(strconv.FormatUint(q.ID,10))
 		var qvo QuestionVo
 		util.Copy(&qvo, &q)
 		qvo.BestAnswer = a
@@ -227,7 +235,7 @@ func GetAllQuestionByTitle(c *gin.Context) {
 	case pageSize >= 100:
 		pageSize = 100
 	case pageSize <= 0:
-		pageSize = 10
+		pageSize = 5
 	}
 
 	if pageNum == 0 {
@@ -251,8 +259,9 @@ func GetAllQuestionByTitle(c *gin.Context) {
 
 	var qvolist []QuestionVo
 	for _, q := range qlist {
-		a := model.Answer{QuestionID: q.ID}
-		a.Get()
+		//a := model.Answer{QuestionID: q.ID}
+		//a.Get()
+		a:=logic.GetBestAnswer(strconv.FormatUint(q.ID,10))
 		var qvo QuestionVo
 		util.Copy(&qvo, &q)
 		qvo.BestAnswer = a
@@ -279,7 +288,7 @@ func GetAllQuestion(c *gin.Context) {
 	case pageSize >= 100:
 		pageSize = 100
 	case pageSize <= 0:
-		pageSize = 10
+		pageSize = 5
 	}
 
 	if pageNum == 0 {
@@ -303,8 +312,9 @@ func GetAllQuestion(c *gin.Context) {
 
 	var qvolist []QuestionVo
 	for _, q := range qlist {
-		a := model.Answer{QuestionID: q.ID}
-		a.Get()
+		//a := model.Answer{QuestionID: q.ID}
+		//a.Get()
+		a:=logic.GetBestAnswer(strconv.FormatUint(q.ID,10))
 		var qvo QuestionVo
 		util.Copy(&qvo, &q)
 		qvo.BestAnswer = a
@@ -345,13 +355,11 @@ func GetQuestionHotList(c *gin.Context) {
 	qlist := logic.QuestionHotList()
 
 	if qlist != nil {
-		var qvolist []QuestionVo
+		var qvolist []QuestionHotListVo
 		for _, q := range qlist {
-			a := model.Answer{QuestionID: q.ID}
-			a.Get()
-			var qvo QuestionVo
+			var qvo QuestionHotListVo
 			util.Copy(&qvo, &q)
-			qvo.BestAnswer = a
+			qvo.Score=dao.RDB.ZScore(logic.ZSetKey,strconv.FormatUint(q.ID,10)).Val()
 			qvolist = append(qvolist, qvo)
 		}
 
@@ -371,4 +379,71 @@ func GetQuestionHotList(c *gin.Context) {
 			},
 		)
 	}
+}
+
+func GetAnswerListByScore(c *gin.Context){
+	pageSize, _ := strconv.ParseInt(c.Query("pagesize"),10,64)
+	pageNum, _ := strconv.ParseInt(c.Query("pagenum"),10,64)
+	questionID:= c.Query("question_id")
+
+	switch {
+	case pageSize >= 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
+	}
+
+	if pageNum == 0 {
+		pageNum = 1
+	}
+
+	var alist []model.Answer
+
+	alist= logic.GetAnswerListByScore(questionID,pageNum, pageSize)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    util.CodeSuccess,
+		"message": util.CodeSuccess.Msg(),
+		"data": gin.H{
+			"answerList": alist,
+		},
+	})
+}
+
+func GetVoteInfo(c *gin.Context){
+	aid:= c.Query("answerId")
+	userID := c.MustGet("userID").(uint64)
+	direction:=logic.GetVoteInfo(aid,userID)
+
+	c.JSON(http.StatusOK, gin.H{
+		"code":    util.CodeSuccess,
+		"message": util.CodeSuccess.Msg(),
+		"data":direction,
+	})
+}
+
+func GetAnswerListByUserId(c *gin.Context){
+	pageSize, _ := strconv.ParseInt(c.Query("pagesize"),10,64)
+	pageNum, _ := strconv.ParseInt(c.Query("pagenum"),10,64)
+	userID := c.MustGet("userID").(uint64)
+
+	switch {
+	case pageSize >= 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
+	}
+
+	if pageNum == 0 {
+		pageNum = 1
+	}
+
+	alist,total,code := model.GetAnswerListByUserId(userID,pageSize,pageNum)
+	c.JSON(http.StatusOK, gin.H{
+		"code":    code,
+		"message": code.Msg(),
+		"total":total,
+		"data": gin.H{
+			"answerList": alist,
+		},
+	})
 }

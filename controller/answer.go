@@ -49,6 +49,7 @@ func AddAnswer(c *gin.Context) {
 
 	//向question的channel发送消息以增加回答数
 	logic.UpdateQuestionAnswerCountChan<-a.QuestionID
+	logic.CreateVoteChan<-a
 }
 
 // UpdateAnswer func 更新回答
@@ -212,3 +213,5 @@ func GetAnswers(c *gin.Context) {
 		},
 	})
 }
+
+

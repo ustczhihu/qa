@@ -80,7 +80,6 @@ func QuestionRedis2Mysql() {
 					return
 				}
 			}
-
 		}
 	}
 }
@@ -113,13 +112,13 @@ func QuestionViewCount() {
 			}
 
 			//通过channel传递要更新的(qid,incrCount)列表
-			if count > 2 {
+			if count >= 1 {
 				ViewCountWrite2SQLchan <- set
 				set = make(map[uint64]int)
 				count = 0
 			}
 
-		//初始化新问题的浏览量
+		//初始化新问题的浏览量 + 初始化分数
 		case qid := <-CreateQuestionViewCountChan:
 			err := dao.RDB.HSet(HSetKey+strconv.FormatUint(qid, 10), HViewCount, 0).Err()
 			if err != nil {
@@ -157,7 +156,7 @@ func QuestionAnswerCount() {
 			}
 
 			//通过channel传递要更新的(qid,incrCount)列表
-			if count > 2 {
+			if count >= 1 {
 				AnswerCountWrite2SQLchan <- set
 				set = make(map[uint64]int)
 				count = 0
@@ -174,8 +173,8 @@ func QuestionAnswerCount() {
 }
 
 func QuestionHotList()[]model.Question{
-	// 取分数最高的5个
-	ret, err := dao.RDB.ZRevRangeWithScores(ZSetKey, 0, 4).Result()
+	// 取分数最高的10个
+	ret, err := dao.RDB.ZRevRangeWithScores(ZSetKey, 0, 9).Result()
 	if err != nil {
 		fmt.Printf("zrevrange failed, err:%v\n", err)
 		return nil
@@ -201,4 +200,14 @@ func QuestionHotList()[]model.Question{
 		}
 	}
 	return questionList
+}
+
+func InitQuestionScore(q model.Question){
+	score := (float64)(util.Strtime2Int(q.CreatedAt))
+	//fmt.Println(util.Strtime2Int(q.CreatedAt))
+	err:=dao.RDB.ZAdd(ZSetKey, redis.Z{Score: score , Member: strconv.FormatUint(q.ID, 10)}).Err()
+	if err != nil {
+		util.Log.Error(err)
+		return
+	}
 }

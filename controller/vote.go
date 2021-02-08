@@ -13,7 +13,8 @@ import (
 //回答投票
 func VoteForAnswer(c *gin.Context) {
 	var v model.AnswerVote
-	if err:=c.ShouldBindJSON(v);err!=nil{
+	if err:=c.ShouldBindJSON(&v);err!=nil{
+
 		c.JSON(http.StatusOK, gin.H{
 			"code":    util.VoteInvalidParams,
 			"message": util.VoteInvalidParams.Msg(),
