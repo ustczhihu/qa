@@ -28,7 +28,7 @@ func Init() (r *gin.Engine) {
 		question.POST("/update", middleware.JwtToken(), controller.UpdateQuestion)
 		question.POST("/delete", middleware.JwtToken(), controller.DeleteQuestion)
 		question.GET("/queryAllByUserId", middleware.JwtToken(), controller.GetAllQuestionByUserId)
-		question.GET("/queryAllByTitle", middleware.JwtToken(), controller.GetAllQuestionByTitle)
+		question.GET("/queryAllByTitle",controller.GetAllQuestionByTitle)
 		question.GET("/queryHotList",controller.GetQuestionHotList)
 		question.GET("/queryAll", controller.GetAllQuestion)
 		question.GET("/get", controller.GetQuestion)
