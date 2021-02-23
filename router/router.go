@@ -27,14 +27,17 @@ func Init() (r *gin.Engine) {
 		question.POST("/add", middleware.JwtToken(), controller.AddQuestion)
 		question.POST("/update", middleware.JwtToken(), controller.UpdateQuestion)
 		question.POST("/delete", middleware.JwtToken(), controller.DeleteQuestion)
-		question.GET("/queryAllByUserId", middleware.JwtToken(), controller.GetAllQuestionByUserId)
-		question.GET("/queryAllByTitle",controller.GetAllQuestionByTitle)
-		question.GET("/queryHotList",controller.GetQuestionHotList)
-		question.GET("/queryAll", controller.GetAllQuestion)
 		question.GET("/get", controller.GetQuestion)
+		question.GET("/queryAll", controller.GetAllQuestion)
+		question.GET("/queryAllByTitle",controller.GetAllQuestionByTitle)
+		question.GET("/queryAllByUserId", middleware.JwtToken(), controller.GetAllQuestionByUserId)
+		question.GET("/queryHotList",controller.GetQuestionHotList)
+
 		question.GET("/queryAnswerListByScore", controller.GetAnswerListByScore)
-		question.GET("/queryVoteInfo",  middleware.JwtToken(),controller.GetVoteInfo)
 		question.GET("/queryAnswerListByUserId",  middleware.JwtToken(),controller.GetAnswerListByUserId)
+
+		question.GET("/queryVoteInfo",  middleware.JwtToken(),controller.GetVoteInfo)
+
 	}
 
 	profile := r.Group("/profile")
