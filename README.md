@@ -80,8 +80,6 @@ go env -w GOPROXY=https://goproxy.cn,direct
 
 ## 使用方法
 
-### 使用说明
-
 1. 修改./config/config.yaml
 
 ```yaml
