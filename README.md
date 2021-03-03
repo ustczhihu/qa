@@ -125,4 +125,18 @@ air
 
 ## 效果图
 
-TODO
+![homepage](/preview/homepage.png)
+
+![profile](/preview/profile.png)
+
+![profile1](/preview/profile1.png)
+
+![profile2](/preview/profile2.png)
+
+![question](/preview/question.png)
+
+![answer](/preview/answer.png)
+
+![answer2](/preview/answer2.png)
+
+![answer3](/preview/answer3.png)
